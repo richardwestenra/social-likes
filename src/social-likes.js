@@ -213,7 +213,8 @@
 		zeroes: false,
 		wait: 500,
 		popupCheckInterval: 500,
-		singleTitle: 'Share'
+		singleTitle: 'Share',
+		nice: false
 	};
 
 	function SocialLikes(container, options) {
@@ -488,6 +489,10 @@
 		updateCounter: function(number) {
 			number = parseInt(number, 10) || 0;
 
+			if (this.options.nice) {
+				number = si(number);
+			}
+
 			var params = {
 				'class': this.getElementClassNames('counter'),
 				'text': number
@@ -620,6 +625,27 @@
 				elem.css('top', window.innerHeight - rect.bottom - offset + top);
 		}
 		elem.addClass(openClass);
+	}
+
+	// Round number to the nearest 2 large digits (e.g. 12345 => 12000)
+	function roundish(num) {
+		for(var i=1000000; i>=10; i=i/10){
+			if (num>(i*10)) {
+				return Math.round(num/i)*i;
+			}
+		}
+		return Math.round(num);
+	}
+
+	// Shorten number using Metric/SI prefixes
+	function si(num) {
+		var prefixes = { 'M': 1000000, 'k': 1000};
+		for(var key in prefixes){
+			if (num > prefixes[key]) {
+				return roundish(num) / prefixes[key] + key;
+			}
+		}
+		return num;
 	}
 
 
